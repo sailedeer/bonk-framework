@@ -49,7 +49,7 @@ namespace Bonk {
 			INA226::enableShuntOverLimitAlert();
 		}
 		void begin() {
-			Main226::begin(0.05f, 0.9f);
+			Experiment226::begin(0.05f, 0.9f);
 		}
 	};
 
