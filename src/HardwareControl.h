@@ -33,6 +33,26 @@ namespace Bonk {
 		}
 	};
 
+	class Experiment226: public INA226 {
+	public:
+		void begin(float shuntResistor, float currentLimit) {
+			INA226::begin();
+			INA226::configure(
+				INA226_AVERAGES_4,
+				INA226_BUS_CONV_TIME_140US,
+				INA226_SHUNT_CONV_TIME_140US,
+				INA226_MODE_SHUNT_BUS_CONT);
+			// it's unlikely we'll need precise current readings, so I'd rather go high
+			// with the maximum current to make it easier to debug overcurrents
+			INA226::calibrate(shuntResistor, 2.0f);
+			INA226::setShuntVoltageLimit(currentLimit * shuntResistor);
+			INA226::enableShuntOverLimitAlert();
+		}
+		void begin() {
+			Main226::begin(0.05f, 0.9f);
+		}
+	};
+
 	class Boost226: public INA226 {
 	public:
 		void begin(float shunt_resistor) {
@@ -118,7 +138,7 @@ namespace Bonk {
 			Wire.beginTransmission(_addr);
 			Wire.write((uint8_t)Pca9557Register::REG_INPUT);
 			Wire.endTransmission();
-			Wire.requestFrom(_addr, 1);
+			Wire.requestFrom(_addr, (uint8_t)1);
 			return Wire.read();
 		}
 		// for reg > 0
@@ -191,14 +211,14 @@ namespace Bonk {
 			Wire.beginTransmission(_addr);
 			Wire.write((uint8_t)reg);
 			Wire.endTransmission();
-			Wire.requestFrom(_addr, 1);
+			Wire.requestFrom(_addr, (uint8_t)1);
 			return Wire.read();
 		}
 		uint16_t readRegister16(Tmp411Register reg) {
 			Wire.beginTransmission(_addr);
 			Wire.write((uint8_t)reg);
 			Wire.endTransmission();
-			Wire.requestFrom(_addr, 2);
+			Wire.requestFrom(_addr, (uint8_t)2);
 			return (Wire.read() << 8) + Wire.read();
 		}
 	};
