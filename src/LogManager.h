@@ -18,7 +18,7 @@ class LogManager {
   public:
     LogManager() { }
 
-    bool begin(const char* log_path, const char* data_path) {
+    bool begin(const char* log_path) {
 	    if (log_path == nullptr) {
 		    return false;
 	    }
